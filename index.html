@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --navy: #08204d;
@@ -38,7 +39,6 @@
     .btn-outline { background: transparent; border: 1.5px solid var(--navy); color: var(--navy); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* টপ বার ও হেডার */
     .top-bar {
       background: var(--navy-dark); color: var(--gold); padding: 7px 16px;
       font-size: 13px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
@@ -68,7 +68,6 @@
     .sub-nav a { color: #e2e8f0; text-decoration: none; padding: 9px 0; font-size: 14px; white-space: nowrap; border-bottom: 2px solid transparent; }
     .sub-nav a:hover, .sub-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-    /* হিরো */
     .hero { background: linear-gradient(125deg, var(--navy-dark) 0%, var(--navy) 60%, #153c87 100%); color: #fff; padding: 38px 16px; }
     .hero-inner { max-width: 1220px; margin: 0 auto; display: grid; grid-template-columns: 1.25fr 0.95fr; gap: 26px; align-items: center; }
     .hero-badge { display: inline-block; background: rgba(234,179,8,0.18); border: 1px solid var(--gold); color: var(--gold); padding: 3px 12px; border-radius: 20px; font-size: 13px; margin-bottom: 10px; }
@@ -80,7 +79,6 @@
     .step-item { display: flex; gap: 10px; margin-bottom: 10px; font-size: 14px; align-items: flex-start; }
     .step-num { background: var(--gold); color: var(--navy-dark); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 14px; }
 
-    /* মেইন ও প্রোডাক্ট */
     .container { max-width: 1220px; margin: 28px auto; padding: 0 16px; }
     .section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
     .section-title h2 { font-size: 21px; color: var(--navy); border-left: 5px solid var(--gold); padding-left: 10px; }
@@ -104,7 +102,6 @@
 
     footer { background: var(--navy-dark); color: #cbd5e1; padding: 32px 16px 18px; margin-top: 44px; text-align: center; font-size: 14px; }
 
-    /* মডাল */
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(5,21,54,0.68); z-index: 999; align-items: center; justify-content: center; padding: 14px; }
     .modal-overlay.open { display: flex; }
     .modal-box { background: #fff; border-radius: 14px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 22px; }
@@ -123,13 +120,17 @@
     .form-group label { display: block; font-weight: 600; margin-bottom: 3px; font-size: 13px; }
     .form-group input, .form-group select { width: 100%; padding: 8px 11px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; }
 
+    .auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .auth-tab { flex: 1; padding: 9px; border: 1.5px solid var(--navy); background: #fff; color: var(--navy); font-weight: 700; border-radius: 8px; cursor: pointer; }
+    .auth-tab.active { background: var(--navy); color: var(--gold); }
+
     .recharge-box { background: #eef2ff; border: 1.5px dashed var(--navy); padding: 14px; border-radius: 10px; margin-bottom: 14px; }
     .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
 
     /* অ্যাডমিন ভিউ */
     #adminView { display: none; min-height: 100vh; }
     .admin-login-wrap { min-height: 100vh; background: linear-gradient(135deg, var(--navy-dark), var(--navy)); display: flex; align-items: center; justify-content: center; padding: 16px; }
-    .admin-login-card { background: #fff; max-width: 400px; width: 100%; padding: 26px; border-radius: 14px; border-top: 6px solid var(--gold); }
+    .admin-login-card { background: #fff; max-width: 440px; width: 100%; padding: 26px; border-radius: 14px; border-top: 6px solid var(--gold); }
     .admin-shell { display: none; min-height: 100vh; }
     .admin-topbar { background: var(--navy-dark); color: #fff; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 3px solid var(--gold); }
     .admin-layout { display: grid; grid-template-columns: 230px 1fr; min-height: calc(100vh - 58px); }
@@ -149,7 +150,7 @@
     .badge-done { background: #dcfce7; color: #166534; }
     .badge-rejected { background: #fee2e2; color: #991b1b; }
 
-    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--navy); color: var(--gold); padding: 12px 18px; border-radius: 10px; font-weight: 600; box-shadow: 0 8px 20px rgba(0,0,0,0.25); display: none; z-index: 1200; max-width: 340px; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: var(--navy); color: var(--gold); padding: 12px 18px; border-radius: 10px; font-weight: 600; box-shadow: 0 8px 20px rgba(0,0,0,0.25); display: none; z-index: 1200; max-width: 360px; }
 
     @media (max-width: 768px) {
       .hero-inner, .admin-layout { grid-template-columns: 1fr; }
@@ -166,7 +167,7 @@
     <div class="top-bar">
       <span>🎉 চলো কিনি এক ঠিকানায় — রিচার্জ করলেই ২.৫ গুণ লিমিট!</span>
       <div>
-        <span style="margin-right:10px;">👤 <strong id="topMemberName">রহিম উদ্দিন</strong> (<span id="topMemberId">CK-101</span>)</span>
+        <span id="topUserBadge" style="margin-right:10px;">👤 অতিথি (লগইন করুন)</span>
         <a href="#admin">🔐 অ্যাডমিন লিংক</a>
       </div>
     </div>
@@ -184,7 +185,7 @@
         </div>
 
         <div class="header-actions">
-          <button class="btn btn-outline" onclick="openAccountModal()">👤 অ্যাকাউন্ট / নতুন সদস্য</button>
+          <button class="btn btn-outline" id="authBtn" onclick="openAuthOrLogout()">👤 লগইন / অ্যাকাউন্ট খুলুন</button>
           <button class="btn btn-gold" onclick="openWalletModal()">🎫 রিচার্জ ও ওয়ালেট (৳ <span id="topMainWallet">০</span>)</button>
           <button class="btn btn-navy" onclick="openModal('cartModal')">🛒 কার্ট (<span id="cartCount">০</span>)</button>
         </div>
@@ -205,7 +206,7 @@
     <section class="hero">
       <div class="hero-inner">
         <div>
-          <div class="hero-badge">🇧🇩 মার্চেন্ট মার্কেটপ্লেস ও রিচার্জ কার্ড সিস্টেম</div>
+          <div class="hero-badge">🇧🇩 অনলাইন মার্কেটপ্লেস ও রিচার্জ কার্ড সিস্টেম</div>
           <h1>চলো কিনি এক ঠিকানায় — <span>রিচার্জ কার্ডে আড়াই গুণ লিমিট!</span></h1>
           <p>মার্চেন্টের দোকান থেকে পছন্দের পণ্য কিনে পান বিশেষ রিচার্জ কার্ড। আপনার অ্যাকাউন্টে রিচার্জ করলেই পাবেন ২.৫ গুণ লিমিট—যা থেকে প্রতি সপ্তাহের শনিবার নির্দিষ্ট হারে মেইন ওয়ালেটে যুক্ত হবে।</p>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -227,7 +228,7 @@
     <main class="container" id="products-section">
       <div class="section-title">
         <h2>মার্চেন্টদের নিজস্ব পণ্য সমূহ</h2>
-        <span style="color:var(--muted); font-size:13px;">অর্ডার সম্পন্ন হলে মার্চেন্টের কাছ থেকে রিচার্জ কার্ড পাবেন</span>
+        <span style="color:var(--muted); font-size:13px;">অর্ডার সম্পন্ন হলে রিচার্জ কার্ড পাবেন</span>
       </div>
 
       <div class="categories">
@@ -238,7 +239,9 @@
         <button class="cat-btn" onclick="filterCategory('কসমেটিক্স', this)">✨ কসমেটিক্স</button>
       </div>
 
-      <div class="product-grid" id="productGrid"></div>
+      <div class="product-grid" id="productGrid">
+        <p style="padding:20px; color:var(--muted);">পণ্য লোড হচ্ছে...</p>
+      </div>
 
       <section id="merchants-section" style="margin-top:38px;">
         <div class="section-title">
@@ -259,12 +262,24 @@
     <div class="admin-login-wrap" id="adminLoginBox">
       <div class="admin-login-card">
         <h2 style="color:var(--navy); text-align:center;">🔐 অ্যাডমিন প্যানেল</h2>
-        <p style="font-size:13px; color:var(--muted); text-align:center; margin-bottom:14px;">চলো কিনি এক ঠিকানায় — ম্যানেজমেন্ট</p>
-        <div class="form-group"><label>ইউজারনেম</label><input type="text" id="adminUser" value="admin"></div>
-        <div class="form-group"><label>পাসওয়ার্ড</label><input type="password" id="adminPass" value="1234"></div>
-        <p style="font-size:12px; background:#fefce8; padding:8px; border-radius:6px; margin-bottom:12px;">💡 ডেমো লগইন: <strong>admin</strong> / পাসওয়ার্ড: <strong>1234</strong></p>
-        <button class="btn btn-navy" style="width:100%; justify-content:center;" onclick="loginAdmin()">লগইন করুন</button>
-        <div style="text-align:center; margin-top href="#" style="color:var(--navy); font-size:14px;">← সদস্য সাইটে ফিরে যান</a></div>
+        <p style="font-size:13px; color:var(--muted); text-align:center; margin-bottom:14px;">চলো কিনি এক ঠিকানায় — মালিকানা ও ব্যবস্থাপনা</p>
+
+        <div id="adminAuthForm">
+          <div class="form-group"><label>অ্যাডমিন ইমেইল</label><input type="email" id="adminEmail" placeholder="your@email.com"></div>
+          <div class="form-group"><label>পাসওয়ার্ড</label><input type="password" id="adminPass" placeholder="পাসওয়ার্ড"></div>
+          <button class="btn btn-navy" style="width:100%; justify-content:center;" onclick="loginAdmin()">লগইন করুন</button>
+        </div>
+
+        <div id="notAdminNotice" style="display:none; background:#fefce8; border:1px solid var(--gold); padding:14px; border-radius:10px; font-size:13px;">
+          <strong>⚠️ আপনার এই ইমেইলটি এখনো অ্যাডমিন করা হয়নি!</strong>
+          <p style="margin:6px 0;">নিজেকে স্থায়ী অ্যাডমিন বানাতে Supabase-এর <strong>SQL Editor</strong>-এ গিয়ে নিচের ১ লাইন কোড Copy করে Run করুন:</p>
+          <textarea id="makeAdminSql" readonly rows="2" style="width:100%; font-size:12px; padding:6px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom:8px;"></textarea>
+          <button class="btn btn-gold btn-sm" onclick="copyAdminSql()">কোড কপি করুন</button>
+          <button class="btn btn-navy btn-sm" onclick="checkSessionAndRender()">Run করার পর এখানে চাপুন</button>
+          <button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="logoutUser()">অন্য ইমেইলে লগইন</button>
+        </div>
+
+        <div style="text-align:center; margin-top:12px;"><a href="#" style="color:var(--navy); font-size:14px;">← সদস্য সাইটে ফিরে যান</a></div>
       </div>
     </div>
 
@@ -273,8 +288,8 @@
         <strong style="color:var(--gold);">🛡️ চলো কিনি এক ঠিকানায় — অ্যাডমিন কন্ট্রোল প্যানেল</strong>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <a href="#" class="btn btn-gold btn-sm">🌐 সদস্য সাইট দেখুন</a>
-          <button class="btn btn-outline btn-sm" style="color:#fff; border-color:#fff;" onclick="resetDemoData()">🔄 ডেমো রিসেট</button>
-          <button class="btn btn-red btn-sm" onclick="logoutAdmin()">লগআউট</button>
+          <button class="btn btn-navy btn-sm" onclick="loadAdminData()">🔄 রিফ্রেশ</button>
+          <button class="btn btn-red btn-sm" onclick="logoutUser()">লগআউট</button>
         </div>
       </div>
 
@@ -289,10 +304,710 @@
         </aside>
 
         <main class="admin-main">
-          <!-- সারসংক্ষেপ -->
           <div id="tab-overview" class="admin-tab">
-            <h2 style="color:var(--navy); margin-bottom:14px;">ব্যবসার সারসংক্ষেপ</h2>
+            <h2 style="color:var(--navy); margin-bottom:14px;">ব্যবসার সারসংক্ষেপ (লাইভ ডেটাবেজ)</h2>
             <div class="admin-cards" id="adminSummaryCards"></div>
+          </div>
+
+          <div id="tab-cards" class="admin-tab" style="display:none;">
+            <div class="admin-panel-box" style="border-left: 5px solid var(--gold);">
+              <h2 style="color:var(--navy); margin-bottom:8px;">📅 শনিবারের সাপ্তাহিক পেআউট সেটিংস</h2>
+              <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+                <div class="form-group" style="margin:0; width:200px;">
+                  <label>শনিবারে মেইন ওয়ালেটে যাবে (%)</label>
+                  <input type="number" id="adminSatPercent" min="1" max="100">
+                </div>
+                <button class="btn btn-navy" onclick="saveSatPercent()">পার্সেন্ট সেভ করুন</button>
+                <button class="btn btn-green" onclick="runSaturdayPayout()">⚡ এখনই শনিবারের পেআউট পাঠান</button>
+              </div>
+              <div id="payoutHistoryBox" style="margin-top:12px; font-size:13px; color:var(--muted);"></div>
+            </div>
+
             <div class="admin-panel-box">
-              <h3 style="color:var(--navy);">দ্রুত নির্দেশনা</h3>
-              <p style="font-size:14px; color:var(--muted);">১) “রিচার্জ কার্ড ও শনিবার পেআউট” ট্যাব থেকে কার্ড তৈরি করুন এবং প্রতি শনিব
+              <h2 style="color:var(--navy); margin-bottom:10px;">🎫 নতুন রিচার্জ কার্ড তৈরি করুন</h2>
+              <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+                <div class="form-group" style="margin:0; min-width:200px;">
+                  <label>মার্চেন্টের নাম</label>
+                  <input type="text" id="cardMerchantInput" value="ঢাকা অর্গানিক মার্ট">
+                </div>
+                <div class="form-group" style="margin:0; width:160px;">
+                  <label>কার্ডের মূল্য (৳)</label>
+                  <input type="number" id="cardAmountInput" placeholder="১০০০">
+                </div>
+                <button class="btn btn-gold" onclick="adminCreateCard()">+ কার্ড তৈরি করুন</button>
+              </div>
+              <table>
+                <thead><tr><th>কার্ড কোড</th><th>মার্চেন্ট</th><th>মূল্য</th><th>লিমিট (২.৫x)</th><th>অবস্থা</th></tr></thead>
+                <tbody id="adminCardsTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-orders" class="admin-tab" style="display:none;">
+            <div class="admin-panel-box">
+              <h2 style="color:var(--navy);">ক্রেতার অর্ডার ও রিচার্জ কার্ড প্রদান</h2>
+              <table>
+                <thead><tr><th>অর্ডার</th><th>ক্রেতা</th><th>পণ্য</th><th>মূল্য</th><th>কার্ড মূল্য</th><th>অবস্থা / কার্ড</th><th>অ্যাকশন</th></tr></thead>
+                <tbody id="adminOrdersTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-withdrawals" class="admin-tab" style="display:none;">
+            <div class="admin-panel-box">
+              <h2 style="color:var(--navy);">টাকা উত্তোলনের আবেদন (ন্যূনতম ৳ ৫০০)</h2>
+              <table>
+                <thead><tr><th>সদস্য</th><th>মাধ্যম</th><th>নম্বর</th><th>পরিমাণ</th><th>অবস্থা</th><th>অ্যাকশন</th></tr></thead>
+                <tbody id="adminWithdrawTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-products" class="admin-tab" style="display:none;">
+            <div class="admin-panel-box">
+              <h2 style="color:var(--navy); margin-bottom:10px;">মার্চেন্টের নতুন পণ্য যোগ করুন</h2>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px;">
+                <div class="form-group"><label>পণ্যের নাম</label><input type="text" id="newProdTitle" placeholder="যেমন: দেশি ঘি"></div>
+                <div class="form-group"><label>ক্যাটাগরি</label>
+                  <select id="newProdCat"><option>গ্রোসারি</option><option>ফ্যাশন</option><option>ইলেকট্রনিক্স</option><option>কসমেটিক্স</option></select>
+                </div>
+                <div class="form-group"><label>মার্চেন্ট</label><input type="text" id="newProdMerchant" value="ঢাকা অর্গানিক মার্ট"></div>
+                <div class="form-group"><label>মূল্য (৳)</label><input type="number" id="newProdPrice" placeholder="৮০০"></div>
+                <div class="form-group"><label>কার্ড বোনাস (৳)</label><input type="number" id="newProdCardBonus" placeholder="১০০"></div>
+                <div class="form-group"><label>ইমোজি</label><input type="text" id="newProdIcon" value="🎁"></div>
+              </div>
+              <button class="btn btn-gold" onclick="adminAddProduct()">+ পণ্য যোগ করুন</button>
+              <table>
+                <thead><tr><th>পণ্য</th><th>মার্চেন্ট</th><th>মূল্য</th><th>কার্ড বোনাস</th><th>অ্যাকশন</th></tr></thead>
+                <tbody id="adminProductsTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="tab-members" class="admin-tab" style="display:none;">
+            <div class="admin-panel-box">
+              <h2 style="color:var(--navy);">সদস্যদের তালিকা</h2>
+              <table>
+                <thead><tr><th>আইডি</th><th>নাম ও মোবাইল</th><th>মোট রিচার্জ</th><th>বর্তমান লিমিট</th><th>মেইন ওয়ালেট</th></tr></thead>
+                <tbody id="adminMembersTable"></tbody>
+              </table>
+            </div>
+            <div class="admin-panel-box">
+              <h2 style="color:var(--navy);">মার্চেন্ট তালিকা ও আবেদন</h2>
+              <table>
+                <thead><tr><th>দোকান</th><th>মালিক</th><th>মোবাইল</th><th>অবস্থা</th><th>অ্যাকশন</th></tr></thead>
+                <tbody id="adminMerchantsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== মডালসমূহ ==================== -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>👤 সদস্য লগইন বা নতুন অ্যাকাউন্ট</h3>
+        <button class="close-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabBtnLogin" onclick="switchAuthMode('login')">লগইন করুন</button>
+        <button class="auth-tab" id="tabBtnSignup" onclick="switchAuthMode('signup')">নতুন অ্যাকাউন্ট খুলুন</button>
+      </div>
+
+      <div id="signupFields" style="display:none;">
+        <div class="form-group"><label>আপনার পূর্ণ নাম</label><input type="text" id="authName" placeholder="যেমন: রহিম উদ্দিন"></div>
+        <div class="form-group"><label>মোবাইল নম্বর</label><input type="text" id="authPhone" placeholder="০১৭XXXXXXXX"></div>
+      </div>
+      <div class="form-group"><label>ইমেইল</label><input type="email" id="authEmail" placeholder="example@gmail.com"></div>
+      <div class="form-group"><label>পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label><input type="password" id="authPass" placeholder="******"></div>
+      <button class="btn btn-navy" id="authSubmitBtn" style="width:100%; justify-content:center;" onclick="submitAuth()">লগইন করুন</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="walletModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🎫 আমার অ্যাকাউন্ট, রিচার্জ ও মেইন ওয়ালেট</h3>
+        <button class="close-btn" onclick="closeModal('walletModal')">&times;</button>
+      </div>
+      <div class="wallet-stats">
+        <div class="stat-box"><small>মোট রিচার্জ</small><strong>৳ <span id="wTotalRecharge">০</span></strong></div>
+        <div class="stat-box gold"><small>বর্তমান লিমিট (২.৫ গুণ)</small><strong>৳ <span id="wLimitBalance">০</span></strong></div>
+        <div class="stat-box green"><small>মেইন ওয়ালেট (উত্তোলনযোগ্য)</small><strong>৳ <span id="wMainWallet">০</span></strong></div>
+      </div>
+
+      <div class="recharge-box">
+        <h4 style="color:var(--navy); margin-bottom:6px;">রিচার্জ কার্ড কোড দিয়ে রিচার্জ করুন</h4>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="redeemCardInput" placeholder="কার্ড কোড লিখুন (যেমন: CARD-1000)" style="flex:1; padding:8px 10px; border:1.5px solid var(--navy); border-radius:8px;">
+          <button class="btn btn-navy" onclick="redeemCard()">রিচার্জ করুন</button>
+        </div>
+      </div>
+
+      <p style="font-size:13px; background:#f0fdf4; color:#166534; padding:8px 12px; border-radius:8px; margin-bottom:14px;">
+        📅 প্রতি সপ্তাহের <strong>শনিবার</strong> আপনার লিমিট থেকে <strong><span id="wSatPct">১০</span>%</strong> টাকা মেইন ওয়ালেটে যুক্ত হবে।
+      </p>
+
+      <h4 style="color:var(--navy); margin-bottom:6px;">💸 মেইন ওয়ালেট থেকে টাকা উত্তোলন (ন্যূনতম ৳ ৫০০)</h4>
+      <div id="withdrawLockMsg" style="font-size:13px; margin-bottom:8px;"></div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div class="form-group"><label>মাধ্যম</label>
+          <select id="withdrawMethod"><option>বিকাশ (bKash)</option><option>নগদ (Nagad)</option><option>রকেট (Rocket)</option></select>
+        </div>
+        <div class="form-group"><label>পরিমাণ (ন্যূনতম ৫০০৳)</label><input type="number" id="withdrawAmount" placeholder="৫০০"></div>
+      </div>
+      <div class="form-group"><label>বিকাশ/নগদ নম্বর</label><input type="text" id="withdrawPhone" placeholder="০১XXXXXXXXX"></div>
+      <button class="btn btn-gold" id="withdrawSubmitBtn" style="width:100%; justify-content:center;" onclick="submitWithdrawRequest()">টাকা উত্তোলনের আবেদন করুন</button>
+
+      <div style="margin-top:14px;">
+        <h4 style="color:var(--navy); font-size:14px;">আমার অর্ডার ও প্রাপ্ত রিচার্জ কার্ড:</h4>
+        <div id="memberOrdersBox" style="font-size:13px; margin-top:6px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🛒 আপনার শপিং কার্ট</h3>
+        <button class="close-btn" onclick="closeModal('cartModal')">&times;</button>
+      </div>
+      <div id="cartItemsContainer"></div>
+      <div style="background:#f8fafc; padding:12px; border-radius:10px; margin-top:12px;">
+        <div style="display:flex; justify-content:space-between; font-weight:700;">
+          <span>মোট মূল্য:</span><span>৳ <span id="cartTotalPrice">০</span></span>
+        </div>
+        <div style="display:flex; justify-content:space-between; color:var(--navy); font-weight:700; margin-top:4px;">
+          <span>🎫 মার্চেন্ট রিচার্জ কার্ড পাবেন:</span><span>৳ <span id="cartTotalBonus">০</span></span>
+        </div>
+      </div>
+      <button class="btn btn-navy" style="width:100%; justify-content:center; margin-top:12px;" onclick="checkoutOrder()">অর্ডার কনফার্ম করুন</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="sellerModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🏪 মার্চেন্ট হিসেবে যুক্ত হোন</h3>
+        <button class="close-btn" onclick="closeModal('sellerModal')">&times;</button>
+      </div>
+      <div class="form-group"><label>দোকানের নাম</label><input type="text" id="mShopName" placeholder="যেমন: বাংলা বাজার স্টোর"></div>
+      <div class="form-group"><label>মালিকের নাম</label><input type="text" id="mOwnerName" placeholder="আপনার নাম"></div>
+      <div class="form-group"><label>মোবাইল নম্বর</label><input type="text" id="mPhone" placeholder="০১XXXXXXXXX"></div>
+      <button class="btn btn-gold" style="width:100%; justify-content:center;" onclick="submitMerchantApply()">আবেদন পাঠান</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toastBox"></div>
+
+  <script>
+    const SUPABASE_URL = 'https://ydcbadhfahkoqfewlzgj.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_XIHW46kzrL5iKkLKZOFaaQ_jbdXdjoX';
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let settings = { multiplier: 2.5, saturday_percent: 10, min_withdraw: 500 };
+    let products = [];
+    let merchants = [];
+    let cart = [];
+    let selectedCategory = 'সব';
+    let currentUser = null;
+    let currentProfile = null;
+    let authMode = 'login';
+
+    function toBn(num) {
+      const d = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+      return Number(num || 0).toLocaleString('en-US').replace(/\d/g, x => d[x]);
+    }
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+    function showToast(msg) {
+      const t = document.getElementById('toastBox');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3800);
+    }
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    /* ================= প্রারম্ভিক লোড ও রাউটিং ================= */
+    async function initApp() {
+      await loadPublicData();
+      await checkSessionAndRender();
+    }
+
+    async function loadPublicData() {
+      const { data: sData } = await sb.from('app_settings').select('*').eq('id', 1).maybeSingle();
+      if (sData) settings = sData;
+      document.getElementById('heroSatPercent').innerText = toBn(settings.saturday_percent);
+
+      const { data: pData, error: pErr } = await sb.from('products').select('*').order('id', { ascending: false });
+      if (pErr) {
+        document.getElementById('productGrid').innerHTML = '<p style="color:var(--red); padding:20px;">ডেটাবেজ টেবিল পাওয়া যায়নি! Supabase SQL Editor-এ কোডটি Run করুন।</p>';
+      } else {
+        products = pData || [];
+        renderProducts();
+      }
+
+      const { data: mData } = await sb.from('merchants').select('*').eq('status', 'অনুমোদিত').order('id', { ascending: true });
+      merchants = mData || [];
+      renderPublicMerchants();
+    }
+
+    async function checkSessionAndRender() {
+      const { data: { session } } = await sb.auth.getSession();
+      currentUser = session ? session.user : null;
+      currentProfile = null;
+      if (currentUser) {
+        const { data: prof } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+        currentProfile = prof;
+      }
+      handleRoute();
+    }
+
+    function handleRoute() {
+      const isAdmin = window.location.hash === '#admin';
+      document.getElementById('memberView').style.display = isAdmin ? 'none' : 'block';
+      document.getElementById('adminView').style.display = isAdmin ? 'block' : 'none';
+
+      if (isAdmin) {
+        renderAdminView();
+      } else {
+        syncMemberUI();
+        updateCartUI();
+      }
+    }
+    window.addEventListener('hashchange', handleRoute);
+
+    /* ================= সদস্য লগইন ও UI ================= */
+    function syncMemberUI() {
+      const badge = document.getElementById('topUserBadge');
+      const authBtn = document.getElementById('authBtn');
+      const wSpan = document.getElementById('topMainWallet');
+
+      if (currentProfile) {
+        badge.innerHTML = `👤 <strong>${esc(currentProfile.full_name)}</strong> (${esc(currentProfile.member_code)})`;
+        authBtn.innerText = '🚪 লগআউট';
+        wSpan.innerText = toBn(currentProfile.main_wallet);
+      } else {
+        badge.innerText = '👤 অতিথি (লগইন করুন)';
+        authBtn.innerText = '👤 লগইন / অ্যাকাউন্ট খুলুন';
+        wSpan.innerText = '০';
+      }
+    }
+
+    function openAuthOrLogout() {
+      if (currentUser) {
+        logoutUser();
+      } else {
+        openModal('authModal');
+      }
+    }
+
+    function switchAuthMode(mode) {
+      authMode = mode;
+      document.getElementById('tabBtnLogin').classList.toggle('active', mode === 'login');
+      document.getElementById('tabBtnSignup').classList.toggle('active', mode === 'signup');
+      document.getElementById('signupFields').style.display = mode === 'signup' ? 'block' : 'none';
+      document.getElementById('authSubmitBtn').innerText = mode === 'signup' ? 'নতুন অ্যাকাউন্ট খুলুন' : 'লগইন করুন';
+    }
+
+    async function submitAuth() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPass').value;
+      if (!email || !password) return showToast('ইমেইল ও পাসওয়ার্ড দিন।');
+
+      if (authMode === 'signup') {
+        const full_name = document.getElementById('authName').value.trim();
+        const phone = document.getElementById('authPhone').value.trim();
+        if (!full_name || !phone) return showToast('আপনার নাম ও মোবাইল নম্বর দিন।');
+        const { data, error } = await sb.auth.signUp({
+          email, password, options: { data: { full_name, phone } }
+        });
+        if (error) return showToast('ত্রুটি: ' + error.message);
+        closeModal('authModal');
+        if (!data.session) {
+          showToast('ইমেইলে ভেরিফিকেশন লিংক গেছে—লিংকে ক্লিক করে লগইন করুন!');
+        } else {
+          await checkSessionAndRender();
+          showToast('অভিনন্দন! আপনার অ্যাকাউন্ট খোলা হয়েছে।');
+        }
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) return showToast('ভুল ইমেইল বা পাসওয়ার্ড!');
+        closeModal('authModal');
+        await checkSessionAndRender();
+        showToast('সফলভাবে লগইন হয়েছে!');
+      }
+    }
+
+    async function logoutUser() {
+      await sb.auth.signOut();
+      currentUser = null;
+      currentProfile = null;
+      handleRoute();
+      showToast('লগআউট হয়েছে।');
+    }
+
+    /* ================= ওয়ালেট, রিচার্জ ও উত্তোলন ================= */
+    async function openWalletModal() {
+      if (!currentUser) {
+        showToast('আগে লগইন বা নতুন অ্যাকাউন্ট খুলুন!');
+        openModal('authModal');
+        return;
+      }
+      await checkSessionAndRender();
+      if (!currentProfile) return showToast('প্রোফাইল লোড হচ্ছে, আবার চেষ্টা করুন।');
+
+      document.getElementById('wTotalRecharge').innerText = toBn(currentProfile.total_recharge);
+      document.getElementById('wLimitBalance').innerText = toBn(currentProfile.limit_balance);
+      document.getElementById('wMainWallet').innerText = toBn(currentProfile.main_wallet);
+      document.getElementById('wSatPct').innerText = toBn(settings.saturday_percent);
+
+      const lockMsg = document.getElementById('withdrawLockMsg');
+      const wBtn = document.getElementById('withdrawSubmitBtn');
+      if (Number(currentProfile.main_wallet) < settings.min_withdraw) {
+        lockMsg.innerText = `⚠️ উত্তোলনের জন্য মেইন ওয়ালেটে ন্যূনতম ৳ ${toBn(settings.min_withdraw)} থাকতে হবে। (বর্তমান: ৳ ${toBn(currentProfile.main_wallet)})`;
+        lockMsg.style.color = 'var(--red)';
+        wBtn.disabled = true;
+      } else {
+        lockMsg.innerText = `✅ আপনি এখন ন্যূনতম ৳ ${toBn(settings.min_withdraw)} থেকে ৳ ${toBn(currentProfile.main_wallet)} পর্যন্ত তুলতে পারবেন।`;
+        lockMsg.style.color = 'var(--green)';
+        wBtn.disabled = false;
+      }
+
+      const { data: myOrders } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('id', { ascending: false }).limit(5);
+      document.getElementById('memberOrdersBox').innerHTML = (!myOrders || myOrders.length === 0)
+        ? '<p style="color:var(--muted);">এখনো কোনো অর্ডার নেই।</p>'
+        : myOrders.map(o => `
+          <div style="padding:6px 0; border-bottom:1px solid var(--border);">
+            📦 ${esc(o.order_code)} — ৳ ${toBn(o.total_price)} — <strong>${esc(o.status)}</strong>
+            ${o.issued_card_code ? `<br>🎫 প্রাপ্ত কার্ড: <strong style="color:var(--navy);">${esc(o.issued_card_code)}</strong> (৳ ${toBn(o.card_bonus)})` : ''}
+          </div>
+        `).join('');
+
+      openModal('walletModal');
+    }
+
+    async function redeemCard() {
+      const code = document.getElementById('redeemCardInput').value.trim();
+      if (!code) return showToast('রিচার্জ কার্ড কোড লিখুন।');
+      const { data, error } = await sb.rpc('redeem_recharge_card', { p_code: code });
+      if (error) return showToast('❌ ' + error.message);
+
+      document.getElementById('redeemCardInput').value = '';
+      await openWalletModal();
+      showToast(`🎉 ৳ ${toBn(data.amount)} রিচার্জ সফল! ২.৫ গুণ হিসেবে ৳ ${toBn(data.added_limit)} লিমিট যুক্ত হয়েছে!`);
+    }
+
+    async function submitWithdrawRequest() {
+      const method = document.getElementById('withdrawMethod').value;
+      const amount = parseInt(document.getElementById('withdrawAmount').value, 10);
+      const phone = document.getElementById('withdrawPhone').value.trim();
+      if (!amount || !phone) return showToast('টাকার পরিমাণ ও নম্বর দিন।');
+
+      const { error } = await sb.rpc('request_withdrawal', { p_method: method, p_phone: phone, p_amount: amount });
+      if (error) return showToast('❌ ' + error.message);
+
+      document.getElementById('withdrawAmount').value = '';
+      await openWalletModal();
+      showToast('টাকা উত্তোলনের আবেদন অ্যাডমিনের কাছে পাঠানো হয়েছে!');
+    }
+
+    /* ================= পণ্য ও কার্ট ================= */
+    function filterCategory(cat, btn) {
+      selectedCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const filtered = products.filter(p =>
+        (selectedCategory === 'সব' || p.category === selectedCategory) &&
+        (p.title.toLowerCase().includes(q) || p.merchant_name.toLowerCase().includes(q))
+      );
+      document.getElementById('productGrid').innerHTML = filtered.length === 0
+        ? '<p style="grid-column:1/-1; text-align:center; padding:24px;">কোনো পণ্য পাওয়া যায়নি।</p>'
+        : filtered.map(p => `
+          <div class="product-card">
+            <div class="product-img">
+              <span>${esc(p.icon)}</span>
+              <span class="cashback-tag">🎫 কার্ড বোনাস: ৳ ${toBn(p.card_bonus)}</span>
+            </div>
+            <div class="product-body">
+              <div class="merchant-name">🏪 ${esc(p.merchant_name)}</div>
+              <div class="product-title">${esc(p.title)}</div>
+              <div class="price-row">
+                <span class="price-now">৳ ${toBn(p.price)}</span>
+                <span class="price-old">৳ ${toBn(p.old_price || p.price + 150)}</span>
+              </div>
+              <button class="btn btn-navy" style="width:100%; justify-content:center;" onclick="addToCart(${p.id})">কার্টে যোগ করুন</button>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    function renderPublicMerchants() {
+      document.getElementById('publicMerchantGrid').innerHTML = merchants.map(m =>
+        `<div class="merchant-card"><div style="font-size:28px;">${esc(m.icon || '🏪')}</div><h4>${esc(m.shop_name)}</h4></div>`
+      ).join('');
+    }
+
+    function addToCart(id) {
+      const p = products.find(x => x.id === id);
+      if (!p) return;
+      const ex = cart.find(x => x.id === id);
+      if (ex) ex.qty++; else cart.push({ ...p, qty: 1 });
+      updateCartUI();
+      showToast(`"${p.title}" কার্টে যোগ হয়েছে!`);
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((s, i) => s + i.qty, 0);
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const bonus = cart.reduce((s, i) => s + i.card_bonus * i.qty, 0);
+      document.getElementById('cartCount').innerText = toBn(count);
+      document.getElementById('cartTotalPrice').innerText = toBn(total);
+      document.getElementById('cartTotalBonus').innerText = toBn(bonus);
+      document.getElementById('cartItemsContainer').innerHTML = cart.length === 0
+        ? '<p style="text-align:center; color:var(--muted); padding:16px;">কার্ট খালি।</p>'
+        : cart.map(i => `
+          <div class="cart-item">
+            <div><strong>${esc(i.title)}</strong> (${toBn(i.qty)}টি)<br><small>৳ ${toBn(i.price * i.qty)} | কার্ড: ৳ ${toBn(i.card_bonus * i.qty)}</small></div>
+            <button class="btn btn-outline btn-sm" onclick="cart=cart.filter(x=>x.id!==${i.id}); updateCartUI();">বাদ দিন</button>
+          </div>
+        `).join('');
+    }
+
+    async function checkoutOrder() {
+      if (cart.length === 0) return showToast('কার্টে পণ্য যোগ করুন!');
+      if (!currentUser) {
+        closeModal('cartModal');
+        showToast('অর্ডার করতে আগে লগইন বা অ্যাকাউন্ট খুলুন!');
+        openModal('authModal');
+        return;
+      }
+      const items = cart.map(i => ({ id: i.id, qty: i.qty }));
+      const { data: orderCode, error } = await sb.rpc('place_order', { p_items: items });
+      if (error) return showToast('❌ ' + error.message);
+
+      cart = [];
+      updateCartUI();
+      closeModal('cartModal');
+      showToast(`অর্ডার (${orderCode}) সম্পন্ন! অ্যাডমিন সম্পন্ন করলেই রিচার্জ কার্ড কোড পাবেন।`);
+    }
+
+    async function submitMerchantApply() {
+      const shop_name = document.getElementById('mShopName').value.trim();
+      const owner_name = document.getElementById('mOwnerName').value.trim();
+      const phone = document.getElementById('mPhone').value.trim();
+      if (!shop_name || !owner_name || !phone) return showToast('সব তথ্য দিন।');
+      const { error } = await sb.from('merchants').insert({ shop_name, owner_name, phone, icon: '🏪', status: 'পেন্ডিং' });
+      if (error) return showToast('❌ ' + error.message);
+      closeModal('sellerModal');
+      showToast('মার্চেন্ট আবেদন জমা হয়েছে!');
+    }
+
+    /* ================= অ্যাডমিন প্যানেল ================= */
+    function renderAdminView() {
+      const isAdmin = currentProfile && currentProfile.is_admin === true;
+      document.getElementById('adminLoginBox').style.display = isAdmin ? 'none' : 'flex';
+      document.getElementById('adminDashboard').style.display = isAdmin ? 'block' : 'none';
+
+      if (!isAdmin) {
+        if (currentUser) {
+          document.getElementById('adminAuthForm').style.display = 'none';
+          document.getElementById('notAdminNotice').style.display = 'block';
+          document.getElementById('makeAdminSql').value =
+            `UPDATE public.profiles SET is_admin = true WHERE email = '${currentUser.email}';`;
+        } else {
+          document.getElementById('adminAuthForm').style.display = 'block';
+          document.getElementById('notAdminNotice').style.display = 'none';
+        }
+      } else {
+        loadAdminData();
+      }
+    }
+
+    async function loginAdmin() {
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPass').value;
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) return showToast('ভুল ইমেইল বা পাসওয়ার্ড!');
+      await checkSessionAndRender();
+    }
+
+    function copyAdminSql() {
+      const el = document.getElementById('makeAdminSql');
+      el.select();
+      navigator.clipboard?.writeText(el.value);
+      showToast('SQL কোড কপি হয়েছে! Supabase SQL Editor-এ Run করুন।');
+    }
+
+    function switchAdminTab(tab, btn) {
+      document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+      document.getElementById('tab-' + tab).style.display = 'block';
+      document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      loadAdminData();
+    }
+
+    async function loadAdminData() {
+      const [sRes, mRes, cRes, oRes, wRes, pRes, merchRes, logRes] = await Promise.all([
+        sb.from('app_settings').select('*').eq('id', 1).maybeSingle(),
+        sb.from('profiles').select('*').order('created_at', { ascending: false }),
+        sb.from('recharge_cards').select('*').order('id', { ascending: false }),
+        sb.from('orders').select('*').order('id', { ascending: false }),
+        sb.from('withdrawals').select('*').order('id', { ascending: false }),
+        sb.from('products').select('*').order('id', { ascending: false }),
+        sb.from('merchants').select('*').order('id', { ascending: false }),
+        sb.from('payout_logs').select('*').order('id', { ascending: false }).limit(3)
+      ]);
+
+      if (sRes.data) settings = sRes.data;
+      document.getElementById('adminSatPercent').value = settings.saturday_percent;
+      const members = mRes.data || [];
+      const cards = cRes.data || [];
+      const orders = oRes.data || [];
+      const withdrawals = wRes.data || [];
+      const prods = pRes.data || [];
+      const allMerchants = merchRes.data || [];
+      const logs = logRes.data || [];
+
+      const totalLimit = members.reduce((s, m) => s + Number(m.limit_balance), 0);
+      const totalMain = members.reduce((s, m) => s + Number(m.main_wallet), 0);
+      document.getElementById('adminSummaryCards').innerHTML = `
+        <div class="admin-card"><small>মোট সদস্য</small><h3>${toBn(members.length)} জন</h3></div>
+        <div class="admin-card gold-top"><small>সদস্যদের মোট লিমিট</small><h3>৳ ${toBn(totalLimit)}</h3></div>
+        <div class="admin-card"><small>মেইন ওয়ালেট ব্যালেন্স</small><h3>৳ ${toBn(totalMain)}</h3></div>
+        <div class="admin-card gold-top"><small>মোট তৈরি কার্ড</small><h3>${toBn(cards.length)} টি</h3></div>
+      `;
+
+      document.getElementById('adminCardsTable').innerHTML = cards.map(c => `
+        <tr>
+          <td><strong>${esc(c.card_code)}</strong></td><td>${esc(c.merchant_name)}</td><td>৳ ${toBn(c.amount)}</td>
+          <td>৳ ${toBn(Math.round(c.amount * settings.multiplier))}</td>
+          <td><span class="badge ${c.is_used ? 'badge-rejected' : 'badge-done'}">${c.is_used ? 'ব্যবহৃত (' + esc(c.used_by_label) + ')' : 'সক্রিয়'}</span></td>
+        </tr>
+      `).join('');
+
+      document.getElementById('payoutHistoryBox').innerHTML = logs.length === 0
+        ? 'এখনো কোনো শনিবার পেআউট চালানো হয়নি।'
+        : 'সাম্প্রতিক পেআউট: ' + logs.map(l => `[${toBn(l.percent)}% হারে মোট ৳${toBn(l.total_paid)} প্রদান]`).join(' • ');
+
+      document.getElementById('adminOrdersTable').innerHTML = orders.map(o => `
+        <tr>
+          <td>${esc(o.order_code)}</td><td>${esc(o.member_name)}</td><td>${esc(o.items_text)}</td>
+          <td>৳ ${toBn(o.total_price)}</td><td>৳ ${toBn(o.card_bonus)}</td>
+          <td>${o.issued_card_code ? `<span class="badge badge-done">${esc(o.issued_card_code)}</span>` : '<span class="badge badge-pending">পেন্ডিং</span>'}</td>
+          <td>${o.status === 'পেন্ডিং' ? `<button class="btn btn-green btn-sm" onclick="adminCompleteOrder(${o.id})">সম্পন্ন ও কার্ড দিন</button>` : '—'}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('adminWithdrawTable').innerHTML = withdrawals.map(w => `
+        <tr>
+          <td>${esc(w.member_name)}</td><td>${esc(w.method)}</td><td>${esc(w.phone)}</td><td>৳ ${toBn(w.amount)}</td>
+          <td><span class="badge ${w.status === 'অনুমোদিত' ? 'badge-done' : w.status === 'বাতিল' ? 'badge-rejected' : 'badge-pending'}">${esc(w.status)}</span></td>
+          <td>${w.status === 'পেন্ডিং' ? `<button class="btn btn-green btn-sm" onclick="adminHandleWithdraw(${w.id},'অনুমোদিত')">অনুমোদন</button> <button class="btn btn-red btn-sm" onclick="adminHandleWithdraw(${w.id},'বাতিল')">বাতিল</button>` : '—'}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('adminProductsTable').innerHTML = prods.map(p => `
+        <tr><td>${esc(p.icon)} ${esc(p.title)}</td><td>${esc(p.merchant_name)}</td><td>৳ ${toBn(p.price)}</td><td>৳ ${toBn(p.card_bonus)}</td>
+        <td><button class="btn btn-red btn-sm" onclick="adminDeleteProduct(${p.id})">মুছুন</button></td></tr>
+      `).join('');
+
+      document.getElementById('adminMembersTable').innerHTML = members.map(m => `
+        <tr><td>${esc(m.member_code)}</td><td>${esc(m.full_name)} (${esc(m.phone)})</td><td>৳ ${toBn(m.total_recharge)}</td><td>৳ ${toBn(m.limit_balance)}</td><td>৳ ${toBn(m.main_wallet)}</td></tr>
+      `).join('');
+
+      document.getElementById('adminMerchantsTable').innerHTML = allMerchants.map(m => `
+        <tr><td>${esc(m.shop_name)}</td><td>${esc(m.owner_name)}</td><td>${esc(m.phone)}</td>
+        <td><span class="badge ${m.status === 'অনুমোদিত' ? 'badge-done' : 'badge-pending'}">${esc(m.status)}</span></td>
+        <td>${m.status === 'পেন্ডিং' ? `<button class="btn btn-green btn-sm" onclick="adminApproveMerchant(${m.id})">অনুমোদন</button>` : '—'}</td></tr>
+      `).join('');
+    }
+
+    async function adminCreateCard() {
+      const m = document.getElementById('cardMerchantInput').value.trim();
+      const a = parseInt(document.getElementById('cardAmountInput').value, 10);
+      if (!a || a <= 0) return showToast('সঠিক টাকার পরিমাণ দিন।');
+      const { data: code, error } = await sb.rpc('admin_create_card', { p_merchant: m, p_amount: a });
+      if (error) return showToast('❌ ' + error.message);
+      document.getElementById('cardAmountInput').value = '';
+      await loadAdminData();
+      showToast(`নতুন কার্ড তৈরি হয়েছে: ${code}`);
+    }
+
+    async function saveSatPercent() {
+      const pct = parseFloat(document.getElementById('adminSatPercent').value);
+      if (!pct || pct <= 0 || pct > 100) return showToast('১–১০০ এর মধ্যে দিন।');
+      const { error } = await sb.rpc('admin_set_sat_percent', { p_pct: pct });
+      if (error) return showToast('❌ ' + error.message);
+      await loadAdminData();
+      showToast(`শনিবারের পেআউট হার ${toBn(pct)}% সেভ হয়েছে!`);
+    }
+
+    async function runSaturdayPayout() {
+      const { data: paid, error } = await sb.rpc('admin_run_saturday_payout');
+      if (error) return showToast('❌ ' + error.message);
+      await loadAdminData();
+      showToast(`পেআউট সম্পন্ন! মোট ৳ ${toBn(paid)} মেইন ওয়ালেটে যুক্ত হয়েছে।`);
+    }
+
+    async function adminCompleteOrder(id) {
+      const { data: code, error } = await sb.rpc('admin_complete_order', { p_order_id: id });
+      if (error) return showToast('❌ ' + error.message);
+      await loadAdminData();
+      showToast(`অর্ডার সম্পন্ন! কার্ড কোড (${code}) তৈরি হয়েছে।`);
+    }
+
+    async function adminHandleWithdraw(id, status) {
+      const { error } = await sb.rpc('admin_handle_withdrawal', { p_id: id, p_status: status });
+      if (error) return showToast('❌ ' + error.message);
+      await loadAdminData();
+      showToast(`আবেদন "${status}" করা হয়েছে।`);
+    }
+
+    async function adminAddProduct() {
+      const p_title = document.getElementById('newProdTitle').value.trim();
+      const p_cat = document.getElementById('newProdCat').value;
+      const p_merchant = document.getElementById('newProdMerchant').value.trim();
+      const p_price = parseInt(document.getElementById('newProdPrice').value, 10);
+      const p_bonus = parseInt(document.getElementById('newProdCardBonus').value, 10) || 50;
+      const p_icon = document.getElementById('newProdIcon').value.trim() || '🎁';
+      if (!p_title || !p_price) return showToast('নাম ও মূল্য দিন।');
+      const { error } = await sb.rpc('admin_add_product', { p_title, p_cat, p_merchant, p_price, p_bonus, p_icon });
+      if (error) return showToast('❌ ' + error.message);
+      document.getElementById('newProdTitle').value = '';
+      document.getElementById('newProdPrice').value = '';
+      await loadPublicData();
+      await loadAdminData();
+      showToast('নতুন পণ্য যুক্ত হয়েছে!');
+    }
+
+    async function adminDeleteProduct(id) {
+      const { error } = await sb.rpc('admin_delete_product', { p_id: id });
+      if (error) return showToast('❌ ' + error.message);
+      await loadPublicData();
+      await loadAdminData();
+      showToast('পণ্যটি মুছে ফেলা হয়েছে।');
+    }
+
+    async function adminApproveMerchant(id) {
+      const { error } = await sb.rpc('admin_approve_merchant', { p_id: id });
+      if (error) return showToast('❌ ' + error.message);
+      await loadPublicData();
+      await loadAdminData();
+      showToast('মার্চেন্ট অনুমোদিত হয়েছে!');
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
